@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planner 21 D&iacute;as &mdash; Escritura de Art&iacute;culo Cient&iacute;fico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+:root {
+  --primary: #1a5276;
+  --primary-light: #2980b9;
+  --accent: #e67e22;
+  --success: #27ae60;
+  --bg: #f4f6f9;
+  --card-bg: #ffffff;
+  --text: #2c3e50;
+  --text-light: #7f8c8d;
+  --border: #dce1e8;
+  --phase1: #3498db;
+  --phase2: #e67e22;
+  --phase3: #9b59b6;
+  --phase4: #27ae60;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.header h1 { font-size: 1.9em; margin-bottom: 8px; font-weight: 700; }
+.header p { opacity: 0.9; font-size: 1.05em; }
+
+/* PROGRESS BAR */
+.progress-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+}
+.progress-section h3 { font-size: 0.95em; color: var(--text-light); margin-bottom: 10px; }
+.progress-bar-bg {
+  background: #ecf0f1;
+  border-radius: 10px;
+  height: 18px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--phase1), var(--phase2), var(--phase3), var(--success));
+  transition: width 0.5s ease;
+  min-width: 0;
+}
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: var(--text-light);
+}
+
+/* PROJECT INFO */
+.project-info {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+}
+.project-info h2 { font-size: 1.15em; color: var(--primary); margin-bottom: 15px; }
+.project-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.project-fields label { display: block; font-size: 0.85em; color: var(--text-light); margin-bottom: 4px; font-weight: 600; }
+.project-fields input, .project-fields select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95em;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.project-fields input:focus, .project-fields select:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+.full-width { grid-column: 1 / -1; }
+
+/* TOOLBAR */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+.toolbar button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #219a52; transform: translateY(-1px); }
+.btn-accent { background: var(--accent); color: white; }
+.btn-accent:hover { background: #d35400; transform: translateY(-1px); }
+.btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn-outline:hover { background: var(--primary); color: white; }
+
+/* PHASE TABS */
+.phase-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.phase-tab {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  font-size: 0.88em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  color: white;
+  opacity: 0.6;
+}
+.phase-tab.active { opacity: 1; transform: translateY(-2px); box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
+.phase-tab[data-phase="1"] { background: var(--phase1); }
+.phase-tab[data-phase="2"] { background: var(--phase2); }
+.phase-tab[data-phase="3"] { background: var(--phase3); }
+.phase-tab[data-phase="4"] { background: var(--phase4); }
+.phase-tab.tab-all { background: var(--primary); }
+
+/* DAY CARDS */
+.day-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all 0.3s;
+  border-left: 5px solid var(--border);
+}
+.day-card.phase-1 { border-left-color: var(--phase1); }
+.day-card.phase-2 { border-left-color: var(--phase2); }
+.day-card.phase-3 { border-left-color: var(--phase3); }
+.day-card.phase-4 { border-left-color: var(--phase4); }
+.day-card.completed { opacity: 0.85; }
+.day-card.completed .day-header { background: #f0faf4; }
+
+.day-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+  transition: background 0.2s;
+}
+.day-header:hover { background: #f8f9fa; }
+
+.day-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+.day-check.checked {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.day-number {
+  font-weight: 800;
+  font-size: 1.1em;
+  color: var(--primary);
+  min-width: 55px;
+}
+.day-title { font-weight: 600; flex: 1; font-size: 0.95em; }
+.day-phase-badge {
+  font-size: 0.72em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.day-toggle {
+  font-size: 1.2em;
+  color: var(--text-light);
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.day-toggle.open { transform: rotate(180deg); }
+
+.day-body {
+  padding: 0 20px 20px;
+  display: none;
+}
+.day-body.open { display: block; }
+
+.day-description {
+  background: #f8f9fb;
+  padding: 14px 16px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 0.9em;
+  color: var(--text);
+  line-height: 1.7;
+}
+.day-description strong { color: var(--primary); }
+
+.day-tasks {
+  margin-bottom: 14px;
+}
+.day-tasks h4 { font-size: 0.85em; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 0.9em;
+}
+.task-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.day-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.93em;
+  font-family: inherit;
+  line-height: 1.7;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.day-textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(41,128,185,0.1);
+}
+.day-textarea-label {
+  font-size: 0.85em;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.word-count {
+  text-align: right;
+  font-size: 0.8em;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* SAVE INDICATOR */
+.save-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--success);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.88em;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.save-indicator.show { opacity: 1; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-light);
+  font-size: 0.85em;
+}
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal h3 { margin-bottom: 15px; color: var(--primary); }
+.modal p { margin-bottom: 20px; font-size: 0.95em; color: var(--text); }
+.modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+
+@media (max-width: 768px) {
+  .project-fields { grid-template-columns: 1fr; }
+  .header h1 { font-size: 1.4em; }
+  .toolbar { flex-direction: column; }
+  .toolbar button { width: 100%; justify-content: center; }
+  .phase-tabs { flex-direction: column; }
+  .phase-tab { border-radius: 8px; }
+  .day-header { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Planner de 21 D&iacute;as</h1>
+    <p>Escritura de Art&iacute;culo Cient&iacute;fico para Revistas Scopus / WOS</p>
+    <p style="opacity:0.7; font-size:0.88em; margin-top:6px;">Ciencias Sociales &bull; Dr. Eliseo Lara Ordenes</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <h3>PROGRESO GENERAL</h3>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-text">
+      <span id="progressLabel">0 de 21 d&iacute;as completados</span>
+      <span id="progressPercent">0%</span>
+    </div>
+  </div>
+
+  <!-- PROJECT INFO -->
+  <div class="project-info">
+    <h2>Informaci&oacute;n del Proyecto</h2>
+    <div class="project-fields">
+      <div>
+        <label>T&iacute;tulo del Art&iacute;culo</label>
+        <input type="text" id="proj-title" placeholder="T&iacute;tulo provisional de tu art&iacute;culo">
+      </div>
+      <div>
+        <label>Revista Objetivo</label>
+        <input type="text" id="proj-journal" placeholder="Ej: Revista Iberoamericana de Educaci&oacute;n">
+      </div>
+      <div>
+        <label>Autor(es)</label>
+        <input type="text" id="proj-authors" placeholder="Nombre(s) del/los autor(es)">
+      </div>
+      <div>
+        <label>&Aacute;rea Tem&aacute;tica</label>
+        <input type="text" id="proj-area" placeholder="Ej: Educaci&oacute;n, Psicolog&iacute;a, Sociolog&iacute;a">
+      </div>
+      <div class="full-width">
+        <label>Fecha de Inicio del Plan</label>
+        <input type="date" id="proj-startdate">
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <button class="btn-primary" onclick="saveAll()">&#128190; Guardar Todo</button>
+    <button class="btn-success" onclick="exportToWord()">&#128196; Descargar Word (.docx)</button>
+    <button class="btn-accent" onclick="exportToHTML()">&#128230; Exportar HTML</button>
+    <button class="btn-outline" onclick="showResetModal()">&#128260; Reiniciar</button>
+  </div>
+
+  <!-- PHASE TABS -->
+  <div class="phase-tabs">
+    <button class="phase-tab tab-all active" data-phase="all" onclick="filterPhase('all', this)">Todos los D&iacute;as</button>
+    <button class="phase-tab" data-phase="1" onclick="filterPhase(1, this)">Fase 1: Planificaci&oacute;n</button>
+    <button class="phase-tab" data-phase="2" onclick="filterPhase(2, this)">Fase 2: Escritura</button>
+    <button class="phase-tab" data-phase="3" onclick="filterPhase(3, this)">Fase 3: Revisi&oacute;n</button>
+    <button class="phase-tab" data-phase="4" onclick="filterPhase(4, this)">Fase 4: Env&iacute;o</button>
+  </div>
+
+  <!-- DAY CARDS (generated by JS) -->
+  <div id="daysContainer"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>&copy; 2026 Dr. Eliseo Lara Ordenes &mdash; Planner de Escritura Cient&iacute;fica</p>
+    <p style="margin-top:4px;">www.eliseolaraordenes.com</p>
+  </div>
+</div>
+
+<!-- SAVE INDICATOR -->
+<div class="save-indicator" id="saveIndicator">&#10003; Guardado correctamente</div>
+
+<!-- RESET MODAL -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <h3>Reiniciar Planner</h3>
+    <p>Esta acci&oacute;n eliminar&aacute; todo el contenido guardado y reiniciar&aacute; el planner. &iquest;Est&aacute;s seguro?</p>
+    <div class="modal-buttons">
+      <button class="btn-outline" onclick="closeResetModal()">Cancelar</button>
+      <button class="btn-accent" onclick="resetAll()">S&iacute;, Reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// DATA: 21-day planner structure
+// ============================================
+const plannerData = [
+  // PHASE 1: PLANIFICACION (Days 1-5)
+  {
+    day: 1, phase: 1, phaseName: "Planificaci\u00f3n",
+    title: "Identificaci\u00f3n del tema y pregunta de investigaci\u00f3n",
+    description: "Define con claridad el <strong>problema de investigaci\u00f3n</strong> que abordar\u00e1s. Identifica la brecha en el conocimiento existente y formula una pregunta de investigaci\u00f3n precisa. En Ciencias Sociales, las preguntas suelen orientarse hacia fen\u00f3menos educativos, psicol\u00f3gicos o sociales espec\u00edficos.",
+    tasks: [
+      "Escribe el problema de investigaci\u00f3n en 2-3 p\u00e1rrafos",
+      "Formula la pregunta de investigaci\u00f3n principal y secundarias",
+      "Identifica las palabras clave (5-7 t\u00e9rminos)",
+      "Redacta una justificaci\u00f3n preliminar del estudio"
+    ],
+    placeholder: "Escribe aqu\u00ed tu problema de investigaci\u00f3n, pregunta(s) de investigaci\u00f3n y palabras clave..."
+  },
+  {
+    day: 2, phase: 1, phaseName: "Planificaci\u00f3n",
+    title: "Revisi\u00f3n bibliogr\u00e1fica inicial y estado del arte",
+    description: "Realiza una b\u00fasqueda sistem\u00e1tica en bases de datos como <strong>Scopus, WOS, Google Scholar y ERIC</strong>. Identifica al menos 20-30 art\u00edculos relevantes de los \u00faltimos 5 a\u00f1os. Organiza las referencias por tem\u00e1ticas.",
+    tasks: [
+      "Busca art\u00edculos en Scopus/WOS con tus palabras clave",
+      "Crea una tabla con los 20-30 art\u00edculos m\u00e1s relevantes",
+      "Identifica autores clave y tendencias de investigaci\u00f3n",
+      "Registra las referencias en un gestor bibliogr\u00e1fico (Zotero, Mendeley)"
+    ],
+    placeholder: "Registra aqu\u00ed tus hallazgos bibliogr\u00e1ficos, autores clave y tendencias identificadas..."
+  },
+  {
+    day: 3, phase: 1, phaseName: "Planificaci\u00f3n",
+    title: "Definici\u00f3n del marco te\u00f3rico y conceptual",
+    description: "Establece las <strong>teor\u00edas y conceptos fundamentales</strong> que sustentar\u00e1n tu investigaci\u00f3n. En Ciencias Sociales, es esencial articular una postura epistemol\u00f3gica clara y definir los constructos te\u00f3ricos principales.",
+    tasks: [
+      "Define las teor\u00edas base de tu investigaci\u00f3n",
+      "Elabora definiciones conceptuales y operacionales",
+      "Construye un mapa conceptual del marco te\u00f3rico",
+      "Identifica las hip\u00f3tesis o supuestos de investigaci\u00f3n"
+    ],
+    placeholder: "Describe tu marco te\u00f3rico, teor\u00edas base, definiciones conceptuales e hip\u00f3tesis..."
+  },
+  {
+    day: 4, phase: 1, phaseName: "Planificaci\u00f3n",
+    title: "Dise\u00f1o metodol\u00f3gico y selecci\u00f3n de revista",
+    description: "Define el <strong>enfoque, dise\u00f1o y t\u00e9cnicas de recolecci\u00f3n/an\u00e1lisis de datos</strong>. Simult\u00e1neamente, selecciona 2-3 revistas objetivo indexadas en Scopus o WOS y revisa sus normas para autores.",
+    tasks: [
+      "Define enfoque (cuantitativo, cualitativo o mixto), dise\u00f1o y alcance",
+      "Describe la poblaci\u00f3n, muestra y t\u00e9cnicas de muestreo",
+      "Selecciona instrumentos de recolecci\u00f3n de datos",
+      "Revisa las normas de autor de al menos 2-3 revistas objetivo"
+    ],
+    placeholder: "Detalla tu dise\u00f1o metodol\u00f3gico y las revistas seleccionadas con sus requisitos..."
+  },
+  {
+    day: 5, phase: 1, phaseName: "Planificaci\u00f3n",
+    title: "Esquema detallado (outline) del art\u00edculo",
+    description: "Crea un <strong>esquema jer\u00e1rquico completo</strong> del art\u00edculo siguiendo la estructura IMRyD (Introducci\u00f3n, M\u00e9todo, Resultados y Discusi\u00f3n). Incluye subt\u00edtulos y puntos clave para cada secci\u00f3n.",
+    tasks: [
+      "Elabora el outline con secciones y subsecciones",
+      "Asigna extensi\u00f3n estimada a cada secci\u00f3n (n\u00famero de palabras)",
+      "Distribuye las referencias clave por secci\u00f3n",
+      "Planifica tablas y figuras que incluir\u00e1s"
+    ],
+    placeholder: "Escribe tu outline detallado con secciones, subsecciones y extensi\u00f3n estimada..."
+  },
+  // PHASE 2: ESCRITURA (Days 6-14)
+  {
+    day: 6, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de la Introducci\u00f3n (Parte 1): Contexto y problema",
+    description: "Comienza la Introducci\u00f3n usando la estrategia de <strong>embudo</strong>: de lo general a lo espec\u00edfico. Presenta el contexto amplio, el problema de investigaci\u00f3n y su relevancia. Apunta a 400-600 palabras hoy.",
+    tasks: [
+      "Redacta el p\u00e1rrafo de apertura con el contexto general",
+      "Presenta la problem\u00e1tica espec\u00edfica con evidencia",
+      "Argumenta la relevancia y pertinencia del estudio",
+      "Integra al menos 5-8 citas de la literatura"
+    ],
+    placeholder: "Redacta aqu\u00ed la primera parte de tu Introducci\u00f3n (contexto y problem\u00e1tica)..."
+  },
+  {
+    day: 7, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de la Introducci\u00f3n (Parte 2): Brecha, objetivos y estructura",
+    description: "Completa la Introducci\u00f3n identificando la <strong>brecha en la literatura</strong>, presentando los objetivos del estudio y describiendo brevemente la estructura del art\u00edculo.",
+    tasks: [
+      "Identifica y redacta la brecha de conocimiento",
+      "Formula el objetivo general y los espec\u00edficos",
+      "Presenta las hip\u00f3tesis (si aplica)",
+      "Cierra con un p\u00e1rrafo que anticipe la estructura del art\u00edculo"
+    ],
+    placeholder: "Completa aqu\u00ed la Introducci\u00f3n: brecha, objetivos e hip\u00f3tesis..."
+  },
+  {
+    day: 8, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n del Marco Te\u00f3rico / Revisi\u00f3n de Literatura",
+    description: "Desarrolla la secci\u00f3n de <strong>revisi\u00f3n de literatura o marco te\u00f3rico</strong>. Organiza tem\u00e1ticamente (no cronol\u00f3gicamente) y sintetiza los hallazgos previos en relaci\u00f3n con tu investigaci\u00f3n.",
+    tasks: [
+      "Organiza la literatura por ejes tem\u00e1ticos (no por autor)",
+      "Sintetiza hallazgos previos, no solo los resumas",
+      "Identifica convergencias y divergencias en la literatura",
+      "Conecta la revisi\u00f3n con tu pregunta de investigaci\u00f3n"
+    ],
+    placeholder: "Redacta aqu\u00ed tu revisi\u00f3n de literatura / marco te\u00f3rico..."
+  },
+  {
+    day: 9, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de la Metodolog\u00eda",
+    description: "Describe con <strong>precisi\u00f3n y transparencia</strong> todos los aspectos metodol\u00f3gicos. La secci\u00f3n debe permitir la replicabilidad del estudio. Sigue el orden: dise\u00f1o, participantes, instrumentos, procedimiento, an\u00e1lisis.",
+    tasks: [
+      "Describe el dise\u00f1o de investigaci\u00f3n y enfoque",
+      "Detalla participantes/muestra y criterios de selecci\u00f3n",
+      "Describe instrumentos con datos de validez y confiabilidad",
+      "Explica procedimiento de recogida y an\u00e1lisis de datos",
+      "Incluye consideraciones \u00e9ticas"
+    ],
+    placeholder: "Redacta aqu\u00ed tu secci\u00f3n de Metodolog\u00eda completa..."
+  },
+  {
+    day: 10, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de Resultados (Parte 1): Resultados descriptivos",
+    description: "Presenta los <strong>resultados descriptivos</strong> principales. En estudios cuantitativos, incluye estad\u00edsticos descriptivos y tablas. En cualitativos, presenta las categor\u00edas emergentes con evidencia textual.",
+    tasks: [
+      "Presenta resultados descriptivos (medias, frecuencias, etc.)",
+      "Elabora las tablas principales con formato APA",
+      "Describe los hallazgos sin interpretarlos a\u00fan",
+      "Organiza los resultados seg\u00fan los objetivos de investigaci\u00f3n"
+    ],
+    placeholder: "Redacta aqu\u00ed los resultados descriptivos y tablas principales..."
+  },
+  {
+    day: 11, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de Resultados (Parte 2): Resultados inferenciales o anal\u00edticos",
+    description: "Presenta los <strong>an\u00e1lisis inferenciales</strong> (correlaciones, regresiones, pruebas de hip\u00f3tesis) o los an\u00e1lisis cualitativos en profundidad. Incluye figuras cuando aporten claridad.",
+    tasks: [
+      "Presenta an\u00e1lisis inferenciales o categor\u00edas anal\u00edticas",
+      "Elabora figuras y gr\u00e1ficos complementarios",
+      "Reporta tama\u00f1os de efecto e intervalos de confianza",
+      "Verifica que cada resultado responda a un objetivo"
+    ],
+    placeholder: "Redacta aqu\u00ed los resultados inferenciales/anal\u00edticos y figuras..."
+  },
+  {
+    day: 12, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de la Discusi\u00f3n (Parte 1): Interpretaci\u00f3n de hallazgos",
+    description: "Inicia la Discusi\u00f3n <strong>interpretando</strong> tus hallazgos principales. Compara tus resultados con la literatura previa, explica coincidencias y discrepancias.",
+    tasks: [
+      "Resumen del hallazgo principal en el primer p\u00e1rrafo",
+      "Compara cada resultado con estudios previos",
+      "Explica hallazgos inesperados o contradictorios",
+      "Articula los resultados con el marco te\u00f3rico"
+    ],
+    placeholder: "Redacta aqu\u00ed la interpretaci\u00f3n de tus hallazgos principales..."
+  },
+  {
+    day: 13, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de la Discusi\u00f3n (Parte 2): Implicaciones, limitaciones y futuras l\u00edneas",
+    description: "Completa la Discusi\u00f3n con las <strong>implicaciones pr\u00e1cticas y te\u00f3ricas</strong>, las limitaciones del estudio y sugerencias para investigaci\u00f3n futura.",
+    tasks: [
+      "Describe implicaciones te\u00f3ricas del estudio",
+      "Describe implicaciones pr\u00e1cticas y recomendaciones",
+      "Presenta honestamente las limitaciones",
+      "Sugiere l\u00edneas de investigaci\u00f3n futura"
+    ],
+    placeholder: "Redacta aqu\u00ed implicaciones, limitaciones y futuras l\u00edneas de investigaci\u00f3n..."
+  },
+  {
+    day: 14, phase: 2, phaseName: "Escritura",
+    title: "Redacci\u00f3n de Conclusiones, Abstract y T\u00edtulo definitivo",
+    description: "Redacta las <strong>Conclusiones</strong> (breves, vinculadas a objetivos), el <strong>Abstract</strong> (150-300 palabras, estructurado) y define el <strong>t\u00edtulo definitivo</strong> (conciso, informativo, con palabras clave).",
+    tasks: [
+      "Redacta conclusiones vinculadas a cada objetivo",
+      "Escribe el Abstract estructurado (objetivo, m\u00e9todo, resultados, conclusiones)",
+      "Define el t\u00edtulo definitivo (m\u00e1x. 15 palabras)",
+      "Selecciona 5-7 keywords en espa\u00f1ol e ingl\u00e9s"
+    ],
+    placeholder: "Redacta aqu\u00ed tus Conclusiones, Abstract y T\u00edtulo definitivo..."
+  },
+  // PHASE 3: REVISION (Days 15-18)
+  {
+    day: 15, phase: 3, phaseName: "Revisi\u00f3n",
+    title: "Revisi\u00f3n de coherencia, estructura y argumento",
+    description: "Realiza una <strong>lectura cr\u00edtica completa</strong> del manuscrito. Verifica que el argumento fluya l\u00f3gicamente, que haya coherencia entre secciones y que la estructura sea s\u00f3lida.",
+    tasks: [
+      "Lee el manuscrito completo de corrido",
+      "Verifica coherencia entre Introducci\u00f3n, M\u00e9todo y Resultados",
+      "Asegura que la Discusi\u00f3n responda a los objetivos",
+      "Revisa transiciones entre p\u00e1rrafos y secciones",
+      "Elimina redundancias y fortalece argumentos d\u00e9biles"
+    ],
+    placeholder: "Anota aqu\u00ed los problemas de coherencia encontrados y las correcciones realizadas..."
+  },
+  {
+    day: 16, phase: 3, phaseName: "Revisi\u00f3n",
+    title: "Revisi\u00f3n de referencias, citas y formato bibliogr\u00e1fico",
+    description: "Verifica que <strong>todas las citas</strong> en el texto est\u00e9n en las referencias y viceversa. Asegura el formato correcto seg\u00fan la norma de la revista (APA 7, Vancouver, etc.).",
+    tasks: [
+      "Cruza todas las citas en texto con la lista de referencias",
+      "Verifica formato de citas (APA 7 u otro seg\u00fan la revista)",
+      "Revisa que las referencias est\u00e9n completas y actualizadas",
+      "Usa el gestor bibliogr\u00e1fico para generar la bibliograf\u00eda",
+      "Verifica DOI de cada referencia"
+    ],
+    placeholder: "Registra aqu\u00ed las correcciones de citas y referencias realizadas..."
+  },
+  {
+    day: 17, phase: 3, phaseName: "Revisi\u00f3n",
+    title: "Revisi\u00f3n de estilo, gram\u00e1tica y redacci\u00f3n acad\u00e9mica",
+    description: "Pule la <strong>redacci\u00f3n acad\u00e9mica</strong>. Verifica voz activa vs. pasiva, precisi\u00f3n terminol\u00f3gica, oraciones claras y concisas. Usa herramientas como Grammarly o LanguageTool.",
+    tasks: [
+      "Revisa gram\u00e1tica, ortograf\u00eda y puntuaci\u00f3n",
+      "Elimina muletillas y expresiones coloquiales",
+      "Verifica uso consistente de tiempos verbales por secci\u00f3n",
+      "Revisa precisi\u00f3n de t\u00e9rminos t\u00e9cnicos",
+      "Asegura que el tono sea acad\u00e9mico y objetivo"
+    ],
+    placeholder: "Registra aqu\u00ed las mejoras de estilo y redacci\u00f3n realizadas..."
+  },
+  {
+    day: 18, phase: 3, phaseName: "Revisi\u00f3n",
+    title: "Revisi\u00f3n de tablas, figuras, anexos y formato de la revista",
+    description: "Verifica que <strong>tablas y figuras</strong> cumplan con las normas de la revista. Revisa formato general: m\u00e1rgenes, tipograf\u00eda, interlineado, extensi\u00f3n m\u00e1xima.",
+    tasks: [
+      "Verifica que cada tabla/figura est\u00e9 citada en el texto",
+      "Revisa formato de tablas (APA u otro requerido)",
+      "Asegura calidad y resoluci\u00f3n de figuras (300 dpi m\u00edn.)",
+      "Ajusta el manuscrito al formato espec\u00edfico de la revista",
+      "Verifica extensi\u00f3n total seg\u00fan l\u00edmite de la revista"
+    ],
+    placeholder: "Registra aqu\u00ed las correcciones de formato, tablas y figuras..."
+  },
+  // PHASE 4: FINALIZACION Y ENVIO (Days 19-21)
+  {
+    day: 19, phase: 4, phaseName: "Env\u00edo",
+    title: "Revisi\u00f3n por pares (colega/mentor) y Abstract en ingl\u00e9s",
+    description: "Env\u00eda el manuscrito a un <strong>colega o mentor</strong> para revisi\u00f3n cr\u00edtica. Mientras esperas feedback, prepara la traducci\u00f3n del Abstract al ingl\u00e9s (si se requiere).",
+    tasks: [
+      "Env\u00eda el manuscrito a 1-2 colegas para revisi\u00f3n",
+      "Prepara una lista de preguntas espec\u00edficas para el revisor",
+      "Traduce el Abstract al ingl\u00e9s (revisi\u00f3n por nativo si es posible)",
+      "Verifica keywords en ingl\u00e9s usando tesauros de la disciplina"
+    ],
+    placeholder: "Registra el feedback recibido y la traducci\u00f3n del Abstract..."
+  },
+  {
+    day: 20, phase: 4, phaseName: "Env\u00edo",
+    title: "Incorporaci\u00f3n de correcciones finales",
+    description: "Incorpora el <strong>feedback recibido</strong>, realiza los \u00faltimos ajustes y prepara la versi\u00f3n final del manuscrito. Haz una \u00faltima lectura completa.",
+    tasks: [
+      "Incorpora las sugerencias del revisor par",
+      "Realiza una \u00faltima lectura completa del manuscrito",
+      "Verifica que el manuscrito cumpla TODOS los requisitos de la revista",
+      "Prepara la versi\u00f3n final en el formato requerido"
+    ],
+    placeholder: "Registra las correcciones finales incorporadas y verificaciones..."
+  },
+  {
+    day: 21, phase: 4, phaseName: "Env\u00edo",
+    title: "Preparaci\u00f3n de documentos y env\u00edo a la revista",
+    description: "<strong>\u00a1D\u00eda de env\u00edo!</strong> Prepara todos los documentos requeridos por la revista y realiza el env\u00edo a trav\u00e9s de la plataforma editorial (OJS, ScholarOne, Editorial Manager, etc.).",
+    tasks: [
+      "Redacta la Cover Letter dirigida al editor",
+      "Prepara el archivo del manuscrito anonimizado (si es doble ciego)",
+      "Prepara la p\u00e1gina de t\u00edtulo separada con datos de autores",
+      "Completa formularios de la plataforma de env\u00edo",
+      "Adjunta declaraci\u00f3n de originalidad y conflicto de intereses",
+      "Realiza el env\u00edo y guarda el comprobante"
+    ],
+    placeholder: "Registra los documentos preparados, datos del env\u00edo y n\u00famero de seguimiento..."
+  }
+];
+
+// ============================================
+// RENDER & LOGIC
+// ============================================
+
+const phaseColors = { 1: '#3498db', 2: '#e67e22', 3: '#9b59b6', 4: '#27ae60' };
+
+function renderDays() {
+  const container = document.getElementById('daysContainer');
+  container.innerHTML = '';
+  plannerData.forEach(d => {
+    const card = document.createElement('div');
+    card.className = `day-card phase-${d.phase}`;
+    card.dataset.phase = d.phase;
+    card.dataset.day = d.day;
+    card.id = `day-${d.day}`;
+
+    const tasksHTML = d.tasks.map(t => `<div class="task-item"><div class="task-bullet"></div><span>${t}</span></div>`).join('');
+
+    card.innerHTML = `
+      <div class="day-header" onclick="toggleDay(${d.day})">
+        <div class="day-check" id="check-${d.day}" onclick="event.stopPropagation(); toggleComplete(${d.day})"></div>
+        <span class="day-number">D\u00eda ${d.day}</span>
+        <span class="day-title">${d.title}</span>
+        <span class="day-phase-badge" style="background:${phaseColors[d.phase]}">${d.phaseName}</span>
+        <span class="day-toggle" id="toggle-${d.day}">\u25BC</span>
+      </div>
+      <div class="day-body" id="body-${d.day}">
+        <div class="day-description">${d.description}</div>
+        <div class="day-tasks">
+          <h4>Actividades del d\u00eda</h4>
+          ${tasksHTML}
+        </div>
+        <div class="day-textarea-label">Tu trabajo del d\u00eda:</div>
+        <textarea class="day-textarea" id="text-${d.day}" placeholder="${d.placeholder}" oninput="autoSave(${d.day}); updateWordCount(${d.day})"></textarea>
+        <div class="word-count" id="wc-${d.day}">0 palabras</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleDay(day) {
+  const body = document.getElementById(`body-${day}`);
+  const toggle = document.getElementById(`toggle-${day}`);
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+function toggleComplete(day) {
+  const check = document.getElementById(`check-${day}`);
+  const card = document.getElementById(`day-${day}`);
+  check.classList.toggle('checked');
+  card.classList.toggle('completed');
+  if (check.classList.contains('checked')) {
+    check.innerHTML = '\u2713';
+  } else {
+    check.innerHTML = '';
+  }
+  updateProgress();
+  saveAll();
+}
+
+function updateProgress() {
+  const total = 21;
+  const completed = document.querySelectorAll('.day-check.checked').length;
+  const pct = Math.round((completed / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${completed} de ${total} d\u00edas completados`;
+  document.getElementById('progressPercent').textContent = pct + '%';
+}
+
+function updateWordCount(day) {
+  const text = document.getElementById(`text-${day}`).value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  document.getElementById(`wc-${day}`).textContent = `${words} palabras`;
+}
+
+function filterPhase(phase, btn) {
+  document.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.day-card').forEach(card => {
+    if (phase === 'all' || parseInt(card.dataset.phase) === phase) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// ============================================
+// SAVE / LOAD (localStorage)
+// ============================================
+
+let saveTimeout;
+function autoSave(day) {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => saveAll(), 800);
+}
+
+function saveAll() {
+  const data = {
+    project: {
+      title: document.getElementById('proj-title').value,
+      journal: document.getElementById('proj-journal').value,
+      authors: document.getElementById('proj-authors').value,
+      area: document.getElementById('proj-area').value,
+      startdate: document.getElementById('proj-startdate').value
+    },
+    days: {},
+    completed: []
+  };
+  for (let i = 1; i <= 21; i++) {
+    data.days[i] = document.getElementById(`text-${i}`).value;
+    if (document.getElementById(`check-${i}`).classList.contains('checked')) {
+      data.completed.push(i);
+    }
+  }
+  try {
+    localStorage.setItem('planner21_data', JSON.stringify(data));
+    showSaveIndicator();
+  } catch(e) {
+    console.warn('No se pudo guardar en localStorage:', e);
+  }
+}
+
+function loadAll() {
+  try {
+    const raw = localStorage.getItem('planner21_data');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.project) {
+      document.getElementById('proj-title').value = data.project.title || '';
+      document.getElementById('proj-journal').value = data.project.journal || '';
+      document.getElementById('proj-authors').value = data.project.authors || '';
+      document.getElementById('proj-area').value = data.project.area || '';
+      document.getElementById('proj-startdate').value = data.project.startdate || '';
+    }
+    if (data.days) {
+      for (let i = 1; i <= 21; i++) {
+        if (data.days[i]) {
+          document.getElementById(`text-${i}`).value = data.days[i];
+          updateWordCount(i);
+        }
+      }
+    }
+    if (data.completed) {
+      data.completed.forEach(day => {
+        const check = document.getElementById(`check-${day}`);
+        const card = document.getElementById(`day-${day}`);
+        check.classList.add('checked');
+        check.innerHTML = '\u2713';
+        card.classList.add('completed');
+      });
+    }
+    updateProgress();
+  } catch(e) {
+    console.warn('No se pudo cargar datos:', e);
+  }
+}
+
+function showSaveIndicator() {
+  const ind = document.getElementById('saveIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+}
+
+// ============================================
+// EXPORT TO WORD (.doc via HTML)
+// ============================================
+
+function exportToWord() {
+  const projTitle = document.getElementById('proj-title').value || 'Art\u00edculo Cient\u00edfico';
+  const projJournal = document.getElementById('proj-journal').value || 'Revista por definir';
+  const projAuthors = document.getElementById('proj-authors').value || 'Autor(es)';
+  const projArea = document.getElementById('proj-area').value || '\u00c1rea tem\u00e1tica';
+
+  let content = `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; margin: 2.54cm; }
+  h1 { font-size: 16pt; color: #1a5276; text-align: center; margin-bottom: 6pt; }
+  h2 { font-size: 14pt; color: #1a5276; margin-top: 18pt; margin-bottom: 6pt; border-bottom: 1px solid #2980b9; padding-bottom: 4pt; }
+  h3 { font-size: 12pt; color: #2980b9; margin-top: 12pt; margin-bottom: 4pt; }
+  .meta { text-align: center; color: #666; font-size: 11pt; margin-bottom: 6pt; }
+  .phase-title { background: #eaf2f8; padding: 8pt 12pt; font-size: 13pt; font-weight: bold; color: #1a5276; margin-top: 24pt; margin-bottom: 12pt; border-left: 4pt solid #2980b9; }
+  .day-section { margin-bottom: 18pt; page-break-inside: avoid; }
+  .day-header-doc { font-weight: bold; font-size: 12pt; color: #1a5276; margin-bottom: 4pt; }
+  .day-status { font-size: 10pt; color: #27ae60; font-style: italic; }
+  .day-content { background: #f9f9f9; padding: 8pt 12pt; border-left: 3pt solid #ddd; margin-top: 6pt; white-space: pre-wrap; }
+  .empty { color: #999; font-style: italic; }
+  .footer-doc { text-align: center; font-size: 10pt; color: #999; margin-top: 36pt; border-top: 1px solid #ddd; padding-top: 12pt; }
+</style>
+</head>
+<body>
+  <h1>${escapeHtml(projTitle)}</h1>
+  <p class="meta">${escapeHtml(projAuthors)}</p>
+  <p class="meta">Revista objetivo: ${escapeHtml(projJournal)} | \u00c1rea: ${escapeHtml(projArea)}</p>
+  <p class="meta">Generado el ${new Date().toLocaleDateString('es-CL')}</p>
+  <br>`;
+
+  const phases = [
+    { num: 1, name: 'Fase 1: Planificaci\u00f3n y Preparaci\u00f3n (D\u00edas 1-5)' },
+    { num: 2, name: 'Fase 2: Escritura del Borrador (D\u00edas 6-14)' },
+    { num: 3, name: 'Fase 3: Revisi\u00f3n y Pulido (D\u00edas 15-18)' },
+    { num: 4, name: 'Fase 4: Finalizaci\u00f3n y Env\u00edo (D\u00edas 19-21)' }
+  ];
+
+  phases.forEach(phase => {
+    content += `<div class="phase-title">${phase.name}</div>`;
+    plannerData.filter(d => d.phase === phase.num).forEach(d => {
+      const text = document.getElementById(`text-${d.day}`).value.trim();
+      const isComplete = document.getElementById(`check-${d.day}`).classList.contains('checked');
+      content += `<div class="day-section">`;
+      content += `<div class="day-header-doc">D\u00eda ${d.day}: ${escapeHtml(d.title)}</div>`;
+      if (isComplete) content += `<div class="day-status">\u2713 Completado</div>`;
+      if (text) {
+        content += `<div class="day-content">${escapeHtml(text)}</div>`;
+      } else {
+        content += `<div class="day-content empty">Sin contenido a\u00fan</div>`;
+      }
+      content += `</div>`;
+    });
+  });
+
+  content += `<div class="footer-doc">&copy; Dr. Eliseo Lara Ordenes &mdash; Planner de Escritura Cient\u00edfica 21 D\u00edas<br>www.eliseolaraordenes.com</div>`;
+  content += `</body></html>`;
+
+  const blob = new Blob(['\ufeff' + content], { type: 'application/msword' });
+  saveAs(blob, `Planner_Articulo_Cientifico_${getDateStr()}.doc`);
+}
+
+function exportToHTML() {
+  const data = localStorage.getItem('planner21_data');
+  if (data) {
+    const blob = new Blob([data], { type: 'application/json' });
+    saveAs(blob, `planner21_backup_${getDateStr()}.json`);
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function getDateStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+// ============================================
+// RESET
+// ============================================
+function showResetModal() { document.getElementById('resetModal').classList.add('show'); }
+function closeResetModal() { document.getElementById('resetModal').classList.remove('show'); }
+function resetAll() {
+  localStorage.removeItem('planner21_data');
+  for (let i = 1; i <= 21; i++) {
+    document.getElementById(`text-${i}`).value = '';
+    updateWordCount(i);
+    const check = document.getElementById(`check-${i}`);
+    check.classList.remove('checked');
+    check.innerHTML = '';
+    document.getElementById(`day-${i}`).classList.remove('completed');
+  }
+  document.getElementById('proj-title').value = '';
+  document.getElementById('proj-journal').value = '';
+  document.getElementById('proj-authors').value = '';
+  document.getElementById('proj-area').value = '';
+  document.getElementById('proj-startdate').value = '';
+  updateProgress();
+  closeResetModal();
+}
+
+// ============================================
+// INIT
+// ============================================
+renderDays();
+loadAll();
+
+// Auto-save project fields
+['proj-title','proj-journal','proj-authors','proj-area','proj-startdate'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => saveAll(), 800);
+  });
+});
+</script>
+</body>
+</html>
